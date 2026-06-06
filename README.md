@@ -1,56 +1,180 @@
 # 🚀 AI Telemetry Data Pipeline & Feature Engineering
 
 ## 🚀 Overview
-A robust data processing pipeline built with Python and Pandas to analyze, clean, and engineer features from raw AI API telemetry logs. 
 
-Instead of working with clean Kaggle datasets, this project simulates a real-world LLM gateway backend. It takes messy, nested, and noisy JSON server logs and applies strict data type enforcements, statistical imputations, and feature engineering to create a high-quality, machine-learning-ready dataset.
+A data processing pipeline built with Python and Pandas to analyze, clean, and engineer features from raw AI API telemetry logs.
 
-## 🛠️ Tech Stack & Architecture
-* **Language:** Python 3.x
-* **Core Engine:** Pandas, NumPy
-* **Environment:** Jupyter Notebook, Virtual Environment (venv)
+Rather than working with clean datasets, this project simulates a real-world AI gateway backend environment. The pipeline starts with noisy, semi-structured JSON logs and transforms them into a structured dataset suitable for analysis and machine learning workflows.
+
+---
+
+## 🛠️ Tech Stack
+
+* Python 3.x
+* Pandas
+* NumPy
+* Jupyter Notebook
+* Virtual Environment (venv)
+
+---
+
+## 📁 Project Structure
+
+```text
+ai-telemetry-pipeline/
+│
+├── data/
+│   ├── processed/
+│   │   ├── api_logs_v1_cleaned_2026-05-19.csv
+│   │   └── api_logs_v1_features_added_2026-05-19.csv
+│   │
+│   └── raw/
+│       └── api_logs_v1_2026-05-19.json
+│
+├── notebooks/
+│   ├── 01_pandas_data_cleaning.ipynb
+│   └── 02_feature_engineering.ipynb
+│
+├── scripts/
+│   └── generate_mock_logs.py
+│
+├── src/
+│   └── __init__.py
+│
+├── .env
+├── .gitignore
+├── README.md
+└── requirements.txt
+```
+
+---
 
 ## 📂 Pipeline Structure & Features
 
-### 1. `scripts/generate_mock_logs.py` (Data Generation & Noise Injection)
-Focuses on creating a realistic, messy telemetry dataset.
-* Generates a synthetic dataset of 200 API request logs mimicking an AI gateway.
-* Injects real-world data noise like missing confidence scores, `timeout_error` strings in numeric latency columns, and unstandardized URL traces.
-* Exports raw data as structured JSON.
+### 1️⃣ `scripts/generate_mock_logs.py`
 
-### 2. `01_pandas_data_cleaning.ipynb` (Data Cleaning & Imputation)
-Focuses on standardizing and sanitizing the raw JSON logs.
-* Performs strict type casting: standardizes timestamps to Pandas `datetime64[us]` and forces numeric conversions.
-* Handles missing values using median imputation for latency (to prevent skewness) and mean imputation for confidence scores.
-* Parses complex, concatenated strings in the `raw_system_prompt` column to extract isolated features (`device_type`, `http_status`, `user_query`).
-* Cleans backend server traces to isolate core server node identifiers.
+### Data Generation & Noise Injection
 
-### 3. `02_feature_engineering.ipynb` (Feature Extraction & Encoding)
-Focuses on transforming cleaned data into predictive, ML-ready features.
-* Extracts `hour_of_day` from timestamps to enable time-series and traffic analysis.
-* Engineers a binary `is_error` flag (0 for HTTP 200 OK, 1 for failures) for future classification models.
-* Computes `query_length` to analyze prompt complexity and user behavior.
-* Applies One-Hot Encoding (`pd.get_dummies`) to `device_type` to convert categorical text into numerical feature matrices.
+This script generates a synthetic telemetry dataset that mimics logs produced by an AI API gateway.
+
+#### Features
+
+* Generates 200 synthetic API request logs
+* Injects missing confidence scores
+* Simulates `timeout_error` values in latency fields
+* Creates inconsistent backend traces and URL patterns
+* Exports structured JSON data for downstream processing
+
+---
+
+### 2️⃣ `01_pandas_data_cleaning.ipynb`
+
+### Data Cleaning & Imputation
+
+This notebook focuses on cleaning and standardizing raw telemetry logs.
+
+#### Features
+
+* Converts timestamps into Pandas datetime format
+* Performs numeric type conversions
+* Handles missing values through statistical imputation
+* Extracts structured information from raw prompt strings
+* Cleans backend server traces
+* Standardizes inconsistent and noisy values
+
+---
+
+### 3️⃣ `02_feature_engineering.ipynb`
+
+### Feature Extraction & Encoding
+
+This notebook transforms cleaned data into machine-learning-ready features.
+
+#### Features
+
+* Extracts `hour_of_day` from timestamps
+* Creates a binary `is_error` feature
+* Calculates `query_length`
+* Applies One-Hot Encoding using:
+
+```python
+pd.get_dummies()
+```
+
+* Prepares categorical variables for machine learning workflows
+
+---
 
 ## ⚙️ Local Setup & Installation
 
-To run this data pipeline on your local machine, follow these steps:
+### Step 1: Clone the Repository
 
-**Step 1: Clone the repository**
-    git clone https://github.com/nikhilprasad-data/ai-telemetry-pipeline.git
+```bash
+git clone https://github.com/nikhilprasad-data/ai-telemetry-pipeline.git
+cd ai-telemetry-pipeline
+```
 
-**Step 2: Set up the virtual environment**
-    python -m venv venv
-    source venv/bin/activate
-    # On Windows use: venv\Scripts\activate
+### Step 2: Create a Virtual Environment
 
-**Step 3: Install dependencies**
-    pip install -r requirements.txt
+```bash
+python -m venv venv
+```
 
-**Step 4: Generate data & Run the notebooks**
-    python scripts/generate_mock_logs.py
-    
-After generating the data, launch your Jupyter environment to execute the cleaning and feature engineering pipelines step-by-step.
+### Step 3: Activate the Environment
 
-## 🎯 Key Learning & Impact
-This project acts as a complete end-to-end sandbox for understanding real-world Data Engineering and Exploratory Data Analysis (EDA). It proves core competency in tackling "Garbage In, Garbage Out" (GIGO) scenarios by converting messy, unstructured server logs into high-quality mathematical inputs for Machine Learning algorithms.
+#### Windows
+
+```powershell
+venv\Scripts\activate
+```
+
+#### Linux / macOS
+
+```bash
+source venv/bin/activate
+```
+
+### Step 4: Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### Step 5: Generate Mock Data
+
+```bash
+python scripts/generate_mock_logs.py
+```
+
+### Step 6: Launch Jupyter Notebook
+
+```bash
+jupyter notebook
+```
+
+Run the notebooks in the following order:
+
+1. `01_pandas_data_cleaning.ipynb`
+2. `02_feature_engineering.ipynb`
+
+---
+
+## 🎯 What I Learned From This Project
+
+This project was created to move beyond basic Pandas exercises and work with data that resembles real-world application telemetry.
+
+While building this pipeline, I gained hands-on experience in:
+
+* Processing nested JSON datasets
+* Performing data type enforcement and validation
+* Handling missing values using statistical imputation techniques
+* Cleaning inconsistent and noisy records
+* Parsing semi-structured log data into meaningful features
+* Engineering new features from raw telemetry information
+* Working with datetime operations and time-based analysis
+* Converting categorical variables into machine-learning-ready features using One-Hot Encoding
+* Building a structured data preprocessing workflow using Pandas
+
+One of the most valuable lessons from this project was understanding that feature engineering and data cleaning often require more effort than model building itself. Real-world datasets frequently contain inconsistencies, missing information, invalid data types, and formatting issues that must be resolved before any meaningful analysis can begin.
+
+Through this project, I strengthened my understanding of Pandas, data preprocessing, feature engineering, and the practical workflow required to transform raw operational data into structured analytical datasets.
